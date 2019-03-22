@@ -1,14 +1,15 @@
 import Vue from 'vue';
 import './plugins/vuetify';
-import App from './App.vue';
 import router from './router';
 import store from './store';
 import './registerServiceWorker';
 
 Vue.config.productionTip = false;
 
+const RouterView = () => <router-view/>;
+
 new Vue({
   router,
   store,
-  render: h => h(App),
+  render: h => h(RouterView),
 }).$mount('#app');

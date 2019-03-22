@@ -1,38 +1,26 @@
 <template>
-  <v-app>
-    <v-toolbar app>
-      <v-toolbar-title class="headline text-uppercase">
-        <span>Vuetify</span>
-        <span class="font-weight-light">MATERIAL</span>
-      </v-toolbar-title>
-      <v-spacer />
-      <v-btn
-        flat
-        href="https://github.com/vuetifyjs/vuetify/releases/latest"
-        target="_blank"
-      >
-        <span class="mr-2">Latest Release</span>
-      </v-btn>
-    </v-toolbar>
-
+<v-app v-if="$store.state.auth.authenticated">
+    <main-drawer />
+    <main-navbar />
     <v-content>
-      <HelloWorld />
+      <v-container fluid>
+        <router-view />
+      </v-container>
     </v-content>
   </v-app>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue';
+import MainDrawer from './components/MainDrawer.vue';
+import MainNavbar from './components/MainNavbar.vue';
 
 export default {
   name: 'App',
   components: {
-    HelloWorld,
+    MainDrawer, MainNavbar
   },
-  data() {
-    return {
-      //
-    };
-  },
+  created() {
+    document.title = this.$store.state.auth.user.details.team.name;
+  }
 };
 </script>

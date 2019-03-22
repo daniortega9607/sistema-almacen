@@ -1,25 +1,62 @@
 import Vue from 'vue';
 import Router from 'vue-router';
-import Home from './views/Home.vue';
+import App from './App.vue';
 
 Vue.use(Router);
 
-export default new Router({
-  mode: 'history',
-  base: process.env.BASE_URL,
-  routes: [
-    {
-      path: '/',
-      name: 'home',
-      component: Home,
+const routes = [
+  {
+    path: '/',
+    component: App,
+    children: [
+      { path: '', component: () => import('./views/Home.vue') },
+      { path: 'home', component: () => import('./views/Home.vue') },
+    ],
+    meta: {
+      requiresAuth: true,
     },
-    {
-      path: '/about',
-      name: 'about',
-      // route level code-splitting
-      // this generates a separate chunk (about.[hash].js) for this route
-      // which is lazy-loaded when the route is visited.
-      component: () => import(/* webpackChunkName: "about" */ './views/About.vue'),
+  },
+  {
+    path: '/login',
+    name: 'login',
+    component: () => import('./views/Login.vue'),
+  },
+  {
+    path: '/admin-panel',
+    name: 'admin-panel',
+    component: () => import('./views/Admin.vue'),
+    meta: {
+      requiresSuperadmin: true,
     },
-  ],
+  },
+];
+
+const router = new Router({ mode: 'history', base: process.env.BASE_URL, routes });
+
+router.beforeEach((to, from, next) => {
+  if (to.matched.some(record => record.meta.requiresSuperadmin)) {
+    const user = localStorage.getItem('user') ? JSON.parse(localStorage.user) : null;
+    if (user && user.superadmin) {
+      next();
+    } else if (user) {
+      next('/');
+    } else {
+      next({
+        path: '/login',
+        query: { redirect: to.fullPath },
+      });
+    }
+  } else if (to.matched.some(record => record.meta.requiresAuth)) {
+    const user = localStorage.getItem('user') ? JSON.parse(localStorage.user) : null;
+    if (user) {
+      next();
+    } else {
+      next({
+        path: '/login',
+        query: { redirect: to.fullPath },
+      });
+    }
+  } else next();
 });
+
+export default router;
