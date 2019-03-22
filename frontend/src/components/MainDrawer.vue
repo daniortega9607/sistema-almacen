@@ -1,5 +1,10 @@
 <template>
-  <v-navigation-drawer v-model="drawer" fixed app clipped>
+  <v-navigation-drawer
+    v-model="drawer"
+    fixed
+    app
+    clipped
+  >
     <v-list dense>
       <v-list-tile @click="$router.push('/home')">
         <v-list-tile-action>
@@ -45,7 +50,11 @@
             </v-list-tile-content>
           </v-list-tile>
         </template>
-        <v-list-tile v-for="(child, i) in item.children" :key="i" @click>
+        <v-list-tile
+          v-for="(child, i) in item.children"
+          :key="i"
+          @click="$router.push(child.path)"
+        >
           <v-list-tile-action v-if="child.icon">
             <v-icon>{{ child.icon }}</v-icon>
           </v-list-tile-action>
@@ -71,18 +80,18 @@ export default {
   data() {
     return {
       item: {
-          icon: 'keyboard_arrow_up',
-          'icon-alt': 'keyboard_arrow_down',
-          text: 'Gestión',
-          model: false,
-          children: [
-            { icon: 'list', text: 'Territorios' },
-            { icon: 'crop_square', text: 'Manzanas' },
-            { icon: 'group', text: 'Grupos' },
-            { icon: 'person', text: 'Publicadores' },
-          ]
-        },
-    }
+        icon: 'keyboard_arrow_up',
+        'icon-alt': 'keyboard_arrow_down',
+        text: 'Gestión',
+        model: false,
+        children: [
+          { icon: 'list', text: 'Territorios' },
+          { icon: 'crop_square', text: 'Manzanas' },
+          { icon: 'group', text: 'Grupos' },
+          { icon: 'person', text: 'Publicadores' },
+        ],
+      },
+    };
   },
   computed: {
     drawer: {
@@ -90,9 +99,9 @@ export default {
         return this.$store.state.app.drawer;
       },
       set(val) {
-        this.$store.commit("app/drawer", val);
-      }
-    }
-  }
+        this.$store.commit('app/drawer', val);
+      },
+    },
+  },
 };
 </script>

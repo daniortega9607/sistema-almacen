@@ -8,7 +8,7 @@ Vue.use(Vuex);
 const Store = {
   modules: {
     auth,
-    app
+    app,
   },
 };
 

@@ -1,21 +1,21 @@
 const state = {
   drawer: null,
-}
+};
 
-const getters = {}
+const getters = {};
 
-const actions = {}
+const actions = {};
 
 const mutations = {
-  drawer(state, drawer) {
-    state.drawer = drawer
-  }
-}
+  drawer(store, drawer) {
+    store.drawer = drawer;
+  },
+};
 
 export default {
   namespaced: true,
   state,
   getters,
   actions,
-  mutations
-}
+  mutations,
+};
