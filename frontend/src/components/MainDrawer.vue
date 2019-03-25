@@ -40,6 +40,17 @@
           <v-list-tile-title>Almacen</v-list-tile-title>
         </v-list-tile-content>
       </v-list-tile>
+      <v-list-tile
+        v-if="$store.state.auth.user.details.user_type==1 &&false"
+        @click="$router.push('/envios-almacen')"
+      >
+        <v-list-tile-action>
+          <v-icon>local_shipping</v-icon>
+        </v-list-tile-action>
+        <v-list-tile-content>
+          <v-list-tile-title>Envio de Almacen</v-list-tile-title>
+        </v-list-tile-content>
+      </v-list-tile>
       <!-- <v-list-tile @click="$router.push('/home')">
         <v-list-tile-action>
           <v-icon>location_on</v-icon>

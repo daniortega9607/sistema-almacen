@@ -8,6 +8,7 @@ import Supplier from './supplier';
 import User from './user';
 import Setting from './setting';
 import Stock from './stock';
+import StockMovement from './stock_movement';
 
 export const Entities = {
   Color,
@@ -20,6 +21,7 @@ export const Entities = {
   User,
   Setting,
   Stock,
+  StockMovement
 };
 
 export const MappedEntities = {};

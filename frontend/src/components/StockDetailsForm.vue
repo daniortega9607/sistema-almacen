@@ -100,7 +100,6 @@ import { isEqual } from 'lodash';
 import FormGenerator from './form/FormGenerator.vue';
 import { getEntityHeaders } from '../utils';
 import StockDetails from '../utils/entities/stock_details';
-
 export default {
   components: { FormGenerator },
   props: {
@@ -126,7 +125,7 @@ export default {
   },
   methods: {
     convertYardsToMeters(value) {
-      this.stock.quantity = value * 0.9144;
+      this.stock.quantity = parseFloat(value * 0.9144).toFixed(2);
       this.stock.remaining_quantity = this.stock.quantity;
     },
     async save() {
