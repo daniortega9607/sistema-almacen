@@ -14,7 +14,7 @@
 importScripts("https://storage.googleapis.com/workbox-cdn/releases/3.6.3/workbox-sw.js");
 
 importScripts(
-  "/precache-manifest.16677765385de47a63232f7ec824e1d1.js"
+  "/precache-manifest.69045bbfcedb60f87aee2ddc4e7090db.js"
 );
 
 workbox.core.setCacheNameDetails({prefix: "sistema-almacen"});

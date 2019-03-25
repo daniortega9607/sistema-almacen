@@ -6,6 +6,7 @@ import './registerServiceWorker';
 import 'vue-swatches/dist/vue-swatches.min.css';
 
 Vue.config.productionTip = false;
+Vue.config.devtools = true;
 
 const RouterView = () => <router-view/>;
 

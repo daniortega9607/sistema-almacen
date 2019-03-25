@@ -4,30 +4,30 @@
       text-xs-center
       wrap
     >
-      <v-flex xs12>
+      <!-- <v-flex xs12>
         <v-img
           :src="require('../assets/logo.svg')"
           class="my-3"
           contain
           height="200"
         />
-      </v-flex>
+      </v-flex> -->
 
       <v-flex mb-4>
         <h1 class="display-2 font-weight-bold mb-3">
-          Welcome to Vuetify
+          Bienvenido a {{ $store.state.auth.user.details.team.name }}
         </h1>
-        <p class="subheading font-weight-regular">
+        <!-- <p class="subheading font-weight-regular">
           For help and collaboration with other Vuetify developers,
           <br>please join our online
           <a
             href="https://community.vuetifyjs.com"
             target="_blank"
           >Discord Community</a>
-        </p>
+        </p> -->
       </v-flex>
 
-      <v-flex
+      <!-- <v-flex
         mb-5
         xs12
       >
@@ -88,7 +88,7 @@
             {{ eco.text }}
           </a>
         </v-layout>
-      </v-flex>
+      </v-flex> -->
     </v-layout>
   </v-container>
 </template>
