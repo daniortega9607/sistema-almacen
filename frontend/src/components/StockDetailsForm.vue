@@ -96,10 +96,10 @@
   </v-card>
 </template>
 <script>
+import { isEqual } from 'lodash';
 import FormGenerator from './form/FormGenerator.vue';
 import { getEntityHeaders } from '../utils';
 import StockDetails from '../utils/entities/stock_details';
-import { isEqual } from "lodash";
 
 export default {
   components: { FormGenerator },
@@ -146,7 +146,9 @@ export default {
         if (!err) {
           this.details.push(Object.assign({}, res.data));
           const updatedItem = this.$store.state.entities.stocks.findIndex(
-            ({ id }) => isEqual(id, this.item.id) || parseInt(id) === parseInt(this.item.id)
+            ({ id }) => (
+              isEqual(id, this.item.id) || parseInt(id, 10) === parseInt(this.item.id, 10)
+            ),
           );
           this.item.stock = 0;
           this.details.forEach(
@@ -184,7 +186,9 @@ export default {
           });
           if (!err) {
             const updatedItem = this.$store.state.entities.stocks.findIndex(
-              ({ id }) => isEqual(id, this.item.id) || parseInt(id) === parseInt(this.item.id)
+              ({ id }) => (
+                isEqual(id, this.item.id) || parseInt(id, 10) === parseInt(this.item.id, 10)
+              ),
             );
             this.item.stock = 0;
             this.details.forEach(

@@ -1,13 +1,13 @@
 import Vue from 'vue';
 
-Vue.config.productionTip = false;
-Vue.config.devtools = true;
-
 import './plugins/vuetify';
 import router from './router';
 import store from './store';
 import './registerServiceWorker';
 import 'vue-swatches/dist/vue-swatches.min.css';
+
+Vue.config.productionTip = false;
+Vue.config.devtools = true;
 
 
 const RouterView = () => <router-view/>;
