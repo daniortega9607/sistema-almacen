@@ -6,6 +6,7 @@ import app from './app';
 import entities from './entities';
 
 Vue.use(Vuex);
+Vue.config.devtools = true;
 
 const vuexLocal = new VuexPersistence({ modules: ['auth', 'entities'] });
 
