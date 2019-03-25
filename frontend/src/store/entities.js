@@ -10,8 +10,10 @@ const getters = {
   getItems: store => ({ entity, params = { office: null } }) => {
     let items = store[entity];
     if (params.office && entity === 'stocks') {
-      items = items.filter(item => isEqual(item.office_id, params.office.id));
+      console.log(params)
+      items = items.filter(item => isEqual(item.office_id, params.office.id) || parseInt(item.office_id) === parseInt(params.office.id));
     }
+    console.log(items)
     return items;
   },
   getSearchableItems: store => ({ entity, keys = ['name'] }) => store[entity].map((item) => {
@@ -34,7 +36,7 @@ const actions = {
     const [err, res] = await fetch({ url: `/api/${entity}`, data: item, method: 'post' });
     if (!err && !noUpdate) {
       if (res.exists) {
-        const updatedItem = store.state[entity].findIndex(({ id }) => isEqual(id, res.data.id));
+        const updatedItem = store.state[entity].findIndex(({ id }) => isEqual(id, res.data.id) || parseInt(id) === parseInt(res.data.id));
         store.commit('update', { item: res.data, entity, updatedItem });
       } else store.commit('create', { item: res.data, entity });
     }
@@ -71,13 +73,13 @@ const actions = {
           });
         }
         deleted[entity].forEach((index) => {
-          const item = store.state[entity].findIndex(({ id }) => isEqual(id, index));
+          const item = store.state[entity].findIndex(({ id }) => isEqual(id, index) || parseInt(id) === parseInt(index));
           if (item !== -1) {
             store.commit('delete', { entity, item });
           }
         });
         updated[entity].forEach((item) => {
-          const updatedItem = store.state[entity].findIndex(({ id }) => isEqual(id, item.id));
+          const updatedItem = store.state[entity].findIndex(({ id }) => isEqual(id, item.id) || parseInt(id) === parseInt(item.id));
           if (updatedItem !== -1) {
             store.commit('update', { entity, item, updatedItem });
           } else store.commit('create', { item, entity });

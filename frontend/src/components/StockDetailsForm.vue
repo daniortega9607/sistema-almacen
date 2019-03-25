@@ -146,7 +146,7 @@ export default {
         if (!err) {
           this.details.push(Object.assign({}, res.data));
           const updatedItem = this.$store.state.entities.stocks.findIndex(
-            ({ id }) => isEqual(id, this.item.id)
+            ({ id }) => isEqual(id, this.item.id) || parseInt(id) === parseInt(this.item.id)
           );
           this.item.stock = 0;
           this.details.forEach(
@@ -184,7 +184,7 @@ export default {
           });
           if (!err) {
             const updatedItem = this.$store.state.entities.stocks.findIndex(
-              ({ id }) => isEqual(id, this.item.id)
+              ({ id }) => isEqual(id, this.item.id) || parseInt(id) === parseInt(this.item.id)
             );
             this.item.stock = 0;
             this.details.forEach(
