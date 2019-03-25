@@ -6,17 +6,6 @@ Vue.use(Router);
 
 const routes = [
   {
-    path: '/',
-    component: App,
-    children: [
-      { path: '', component: () => import('./views/Home.vue') },
-      { path: 'home', component: () => import('./views/Home.vue') },
-    ],
-    meta: {
-      requiresAuth: true,
-    },
-  },
-  {
     path: '/login',
     name: 'login',
     component: () => import('./views/Login.vue'),
@@ -27,6 +16,20 @@ const routes = [
     component: () => import('./views/Admin.vue'),
     meta: {
       requiresSuperadmin: true,
+    },
+  },
+  {
+    path: '/',
+    component: App,
+    children: [
+      { path: '', component: () => import('./views/Home.vue') },
+      { path: 'home', component: () => import('./views/Home.vue') },
+      { path: 'ajustes', component: () => import('./views/Settings.vue') },
+      { path: 'almacen', component: () => import('./views/Stock.vue') },
+      { path: ':entity', component: () => import('./components/Entity.vue') },
+    ],
+    meta: {
+      requiresAuth: true,
     },
   },
 ];

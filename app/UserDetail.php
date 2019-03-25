@@ -9,7 +9,7 @@ class UserDetail extends Model
     public $timestamps = false;
 
     protected $fillable = [
-        'user_id', 'team_id'
+        'user_id', 'team_id','user_type','customer_id'
     ];
 
     public function user()

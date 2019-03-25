@@ -6,20 +6,46 @@
     clipped
   >
     <v-list dense>
-      <v-list-tile @click="$router.push('/home')">
+      <v-list-group
+        v-if="$store.state.auth.user.details.user_type==1"
+        v-model="office"
+        prepend-icon="store"
+        append-icon
+      >
+        <template v-slot:activator>
+          <v-list-tile>
+            <v-list-tile-content>
+              <v-list-tile-title>{{ $store.state.app.selectedOffice.name }}</v-list-tile-title>
+            </v-list-tile-content>
+          </v-list-tile>
+        </template>
+        <v-list-tile
+          v-for="(child, i) in $store.state.entities.offices"
+          :key="i"
+          @click="$store.commit('app/selectOffice', child)"
+        >
+          <v-list-tile-content>
+            <v-list-tile-title>{{ child.name }}</v-list-tile-title>
+          </v-list-tile-content>
+        </v-list-tile>
+      </v-list-group>
+      <v-list-tile
+        v-if="$store.state.auth.user.details.user_type==1"
+        @click="$router.push('/almacen')"
+      >
+        <v-list-tile-action>
+          <v-icon>storage</v-icon>
+        </v-list-tile-action>
+        <v-list-tile-content>
+          <v-list-tile-title>Almacen</v-list-tile-title>
+        </v-list-tile-content>
+      </v-list-tile>
+      <!-- <v-list-tile @click="$router.push('/home')">
         <v-list-tile-action>
           <v-icon>location_on</v-icon>
         </v-list-tile-action>
         <v-list-tile-content>
           <v-list-tile-title>Territorio</v-list-tile-title>
-        </v-list-tile-content>
-      </v-list-tile>
-      <v-list-tile @click="$router.push('/territorio')">
-        <v-list-tile-action>
-          <v-icon>format_list_numbered</v-icon>
-        </v-list-tile-action>
-        <v-list-tile-content>
-          <v-list-tile-title>Reporte de Territorio</v-list-tile-title>
         </v-list-tile-content>
       </v-list-tile>
       <v-list-tile @click="$router.push('/servicio')">
@@ -37,8 +63,9 @@
         <v-list-tile-content>
           <v-list-tile-title>Reporte de Asistencia</v-list-tile-title>
         </v-list-tile-content>
-      </v-list-tile>
+      </v-list-tile> -->
       <v-list-group
+        v-if="$store.state.auth.user.details.user_type==1"
         v-model="item.model"
         :prepend-icon="item.model ? item.icon : item['icon-alt']"
         append-icon
@@ -79,16 +106,21 @@
 export default {
   data() {
     return {
+      office: null,
       item: {
         icon: 'keyboard_arrow_up',
         'icon-alt': 'keyboard_arrow_down',
         text: 'Gestión',
         model: false,
         children: [
-          { icon: 'list', text: 'Territorios' },
-          { icon: 'crop_square', text: 'Manzanas' },
-          { icon: 'group', text: 'Grupos' },
-          { icon: 'person', text: 'Publicadores' },
+          { text: 'Colores', path: '/colores' },
+          { text: 'Diseños', path: '/disenos' },
+          { text: 'Telas', path: '/telas' },
+          { text: 'Modelos', path: '/modelos' },
+          { text: 'Sucursales', path: '/sucursales' },
+          { text: 'Clientes', path: '/clientes' },
+          { text: 'Proveedores', path: '/proveedores' },
+          { text: 'Usuarios', path: '/usuarios' },
         ],
       },
     };

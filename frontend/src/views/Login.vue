@@ -19,7 +19,7 @@
                 dark
                 color="primary"
               >
-                <v-toolbar-title>{{ app }}</v-toolbar-title>
+                <v-toolbar-title>Iniciar sesión</v-toolbar-title>
               </v-toolbar>
               <v-card-text>
                 <v-form v-model="valid">

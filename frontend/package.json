@@ -12,11 +12,15 @@
   },
   "dependencies": {
     "axios": "^0.18.0",
+    "lodash": "^4.17.5",
+    "moment": "^2.24.0",
     "register-service-worker": "^1.6.2",
     "vue": "^2.6.6",
     "vue-router": "^3.0.1",
+    "vue-swatches": "^1.0.3",
     "vuetify": "^1.5.5",
-    "vuex": "^3.0.1"
+    "vuex": "^3.0.1",
+    "vuex-persist": "^2.0.0"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "^3.5.0",

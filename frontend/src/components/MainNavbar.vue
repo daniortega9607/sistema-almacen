@@ -7,9 +7,11 @@
     clipped-left
   >
     <v-toolbar-side-icon @click.stop="drawer = !drawer" />
-    <v-toolbar-title>{{ $store.state.auth.user.details.team.name }}</v-toolbar-title>
+    <v-toolbar-title @click="$router.push('/')">
+      {{ $store.state.auth.user.details.team.name }}
+    </v-toolbar-title>
     <v-spacer />
-    <v-menu
+    <!-- <v-menu
       v-model="showNotifications"
       :close-on-content-click="false"
       :nudge-width="200"
@@ -68,10 +70,53 @@
           </v-list-tile>
         </v-list>
       </v-card>
+    </v-menu> -->
+
+    <v-menu
+      v-model="showOffices"
+      :close-on-content-click="true"
+      :nudge-width="200"
+      offset-x
+    >
+      <template v-slot:activator="{ on }">
+        <v-btn
+          class="hidden-xs-only"
+          flat
+          v-on="on"
+        >
+          <v-icon>store</v-icon> {{ $store.state.app.selectedOffice.name }}
+        </v-btn>
+      </template>
+      <v-card>
+        <v-list>
+          <v-list-tile
+            v-for="item in $store.state.entities.offices"
+            :key="item.id"
+          >
+            <v-list-tile-content @click="$store.commit('app/selectOffice', item)">
+              <v-list-tile-title>{{ item.name }}</v-list-tile-title>
+              <v-list-tile-sub-title>{{ item.address }}</v-list-tile-sub-title>
+            </v-list-tile-content>
+            <v-list-tile-action v-if="item.id === $store.state.app.selectedOffice.id">
+              <v-btn
+                icon
+                @click="$store.commit('app/selectOffice', item)"
+              >
+                <v-icon>check</v-icon>
+              </v-btn>
+            </v-list-tile-action>
+          </v-list-tile>
+          <v-list-tile v-if="!notifications.length">
+            <v-list-tile-content>
+              <v-list-tile-sub-title>No hay notificaciones recientes</v-list-tile-sub-title>
+            </v-list-tile-content>
+          </v-list-tile>
+        </v-list>
+      </v-card>
     </v-menu>
     <v-btn
       icon
-      @click="$router.push('/login')"
+      @click="logout"
     >
       <v-icon>logout</v-icon>
     </v-btn>
@@ -83,6 +128,7 @@ export default {
   data() {
     return {
       showNotifications: null,
+      showOffices: null,
       notifications: [
         { id: 1 },
         { id: 2 },
@@ -105,6 +151,12 @@ export default {
       if (index !== -1) {
         this.notifications.splice(index, 1);
       }
+    },
+    async logout() {
+      this.$store.commit('entities/reset');
+      await this.$store.dispatch('auth/logout');
+      localStorage.clear();
+      this.$router.push('/login');
     },
   },
 };

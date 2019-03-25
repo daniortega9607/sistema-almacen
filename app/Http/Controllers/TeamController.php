@@ -33,7 +33,8 @@ class TeamController extends Controller
             $user = User::create($data);
 
             $details = [
-                'team_id' => $item->id
+                'team_id' => $item->id,
+                'user_type' => 1
             ];
             $user->details()->create($details);
         }

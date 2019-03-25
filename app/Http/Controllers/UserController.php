@@ -4,8 +4,6 @@ namespace App\Http\Controllers;
 
 use Auth;
 use App\User;
-use App\NotificationEvent;
-use App\Entity;
 use Illuminate\Http\Request;
 use Validator;
 
@@ -13,12 +11,18 @@ class UserController extends Controller
 {
     public function index(Request $request)
     {
-        $query = User::select('*')->with(['customer']);
-        if (isset($request->search)) {
-            $query->where('name','like','%'.$request->search.'%')
-            ->orWhere('email','like','%'.$request->search.'%');
-        }
-        $query->orderBy('name');
+        $query = User::selectRaw('
+            users.*, 
+            CASE
+                WHEN user_details.user_type = 1 THEN "Administrador"
+                WHEN user_details.user_type = 2 THEN "Vendedor"
+                ELSE "Cliente"
+            END as user_type,
+            customers.name as customer
+        ')->with(['details.team']);
+        $query->join('user_details','user_details.user_id','=','users.id');
+        $query->leftJoin('customers','user_details.customer_id','=','customers.id');
+        $query->where('team_id', $request->user()->details->team_id);
         if (isset($request->paginate)) {
             $paginate = $request->paginate;
             return response()->json($query->paginate($paginate),200);
@@ -26,13 +30,28 @@ class UserController extends Controller
         return response()->json($query->get(),200);
     }
 
-    public function search(Request $request)
+    public function init(Request $request)
     {
-        $query = User::selectRaw('id, name as value');
-        if(isset($request->id)){
-            return response()->json($query->withTrashed()->find($request->id),200);
-        }
-        $query->where('name','like','%'.$request->search.'%');
+        $query = User::selectRaw('
+            users.*,
+            CASE
+                WHEN user_details.user_type = 1 THEN "Administrador"
+                WHEN user_details.user_type = 2 THEN "Vendedor"
+                ELSE "Cliente"
+            END as user_type,
+            customers.name as customer
+        ')->with(['details.team']);
+        $query->join('user_details','user_details.user_id','=','users.id');
+        $query->leftJoin('customers','user_details.customer_id','=','customers.id');
+        $query->where('team_id', $request->user()->details->team_id);
+        $query->whereIn('users.id', $request->all());
+        $query->orWhere(function($query) use ($request)
+        {
+            $query->whereNotIn('users.id',$request->all())
+                  ->where('users.deleted_at',NULL)
+                  ->where('team_id', $request->user()->details->team_id);
+        });
+        $query->withTrashed();
         return response()->json($query->get(),200);
     }
 
@@ -40,25 +59,47 @@ class UserController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'name' => 'required|max:50',
-            'email' => 'required|email',
-            'user_type' => 'required',
+            'email' => 'required|email|unique:users',
             'password' => 'required|min:6',
             'c_password' => 'required|same:password',
         ]);
 
         if ($validator->fails()) {
-            return response()->json(['error' => $validator->errors()], 401);
+            return response()->json(['error' => $validator->errors()], 400);
         }
         
-        $data = $request->only(['name', 'email', 'password','user_type','customer_id']);
+        $data = $request->only(['name', 'email', 'password']);
         $data['password'] = bcrypt($data['password']);
 
         $res = User::create($data);
 
+        $details = [
+            'team_id' => $request->user()->details->team_id,
+            'user_type' => $request->details['user_type'],
+            'customer_id' => $request->details['customer_id'],
+        ];
+        
+        $res->details()->create($details);
+
         return response()->json([
             'status' => (bool) $res,
-            'data' => $res,
-            'message' => $res ? 'Item Created!' : 'Error Creating Item',
+            'data' => $res->selectRaw('
+                users.*, 
+                CASE
+                    WHEN user_details.user_type = 1 THEN "Administrador"
+                    WHEN user_details.user_type = 2 THEN "Vendedor"
+                    ELSE "Cliente"
+                END as user_type,
+                customers.name as customer
+            ')
+            ->join('user_details','user_details.user_id','=','users.id')
+            ->leftJoin('customers','user_details.customer_id','=','customers.id')
+            ->with('details.team')->find($res->id),
+            'message' => $res ? trans('global.created', [
+                'item' => trans('global.user')
+            ]) : trans('global.error_created', [
+                'item' => trans('global.user')
+            ])
         ]);
     }
     
@@ -86,12 +127,34 @@ class UserController extends Controller
     public function update(Request $request, User $user)
     {
         $status = $user->update(
-            $request->only(['name','email','user_type'])
+            $request->only(['name','email'])
         );
+
+        $user->details()->update([
+            'user_type' => $request->details['user_type'],
+            'customer_id' => $request->details['customer_id']
+        ]);
 
         return response()->json([
             'status' => $status,
-            'message' => $status ? 'Item Updated!' : 'Error Updating Item'
+            'data' => 
+            $user->selectRaw('
+                users.*, 
+                CASE
+                    WHEN user_details.user_type = 1 THEN "Administrador"
+                    WHEN user_details.user_type = 2 THEN "Vendedor"
+                    ELSE "Cliente"
+                END as user_type,
+                customers.name as customer
+            ')
+            ->join('user_details','user_details.user_id','=','users.id')
+            ->leftJoin('customers','user_details.customer_id','=','customers.id')
+            ->with('details.team')->find($user->id),
+            'message' => $status ? trans('global.updated', [
+                'item' => trans('global.user')
+            ]) : trans('global.error_updated', [
+                'item' => trans('global.user')
+            ])
         ]);
     }
     
@@ -118,8 +181,11 @@ class UserController extends Controller
                 return response()->json(['error' => $validator->errors()], 400);
             }
             $status = 401;
-            $response = ['error' => ['password'=>[['La contraseña no coincide']]]];
-            if (Auth::guard('web')->attempt($request->only(['email', 'password']))) {
+            $response = ['error' => ['password'=>['La contraseña es incorrecta']]];
+            if (Auth::guard('web')->attempt([
+                'email' => $user->email,
+                'password' => $request->password
+            ])) {
                 $data['password'] = bcrypt($request->n_password);
             }
             else return response()->json($response, $status);
@@ -129,13 +195,13 @@ class UserController extends Controller
 
         return response()->json([
             'status' => $status,
-            'message' => $status ? 'Item Updated!' : 'Error Updating Item'
+            'data' => $user->with('details.team')->find($user->id),
+            'message' => $status ? trans('global.updated', [
+                'item' => trans('global.user')
+            ]) : trans('global.error_updated', [
+                'item' => trans('global.user')
+            ])
         ]);
-    }
-
-    public function show(User $user)
-    {
-        return response()->json(User::with(['user_permissions','customer'])->find($user->id));
     }
     
     public function destroy(User $user)
@@ -144,7 +210,11 @@ class UserController extends Controller
 
         return response()->json([
             'status' => $status,
-            'message' => $status ? 'Item Deleted!' : 'Error Deleting Item'
+            'message' => $status ? trans('global.deleted', [
+                'item' => trans('global.user')
+            ]) : trans('global.error_deleted', [
+                'item' => trans('global.user')
+            ])
         ]);
     }
 }

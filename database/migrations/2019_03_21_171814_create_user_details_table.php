@@ -17,6 +17,8 @@ class CreateUserDetailsTable extends Migration
             $table->bigIncrements('id');
             $table->unsignedBigInteger('user_id');
             $table->unsignedBigInteger('team_id');
+            $table->unsignedBigInteger('user_type');
+            $table->unsignedBigInteger('customer_id')->nullable();
         });
     }
 

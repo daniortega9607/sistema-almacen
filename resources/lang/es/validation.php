@@ -133,6 +133,9 @@ return [
         ],
         'email' => [
             'unique' => 'El correo ya existe en la base de datos'
+        ],
+        'password' => [
+            'required' => 'La contraseña es requerida'
         ]
     ],
 
