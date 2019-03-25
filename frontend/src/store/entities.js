@@ -1,3 +1,4 @@
+import { isEqual } from "lodash";
 import { fetch, getDataFromKey } from '../utils';
 import { getStoredEntities } from '../utils/entities';
 
@@ -9,7 +10,7 @@ const getters = {
   getItems: store => ({ entity, params = { office: null } }) => {
     let items = store[entity];
     if (params.office && entity === 'stocks') {
-      items = items.filter(item => item.office_id === params.office.id);
+      items = items.filter(item => isEqual(item.office_id, params.office.id));
     }
     return items;
   },
@@ -33,7 +34,7 @@ const actions = {
     const [err, res] = await fetch({ url: `/api/${entity}`, data: item, method: 'post' });
     if (!err && !noUpdate) {
       if (res.exists) {
-        const updatedItem = store.state[entity].findIndex(({ id }) => id === res.data.id);
+        const updatedItem = store.state[entity].findIndex(({ id }) => isEqual(id, res.data.id));
         store.commit('update', { item: res.data, entity, updatedItem });
       } else store.commit('create', { item: res.data, entity });
     }
@@ -70,13 +71,13 @@ const actions = {
           });
         }
         deleted[entity].forEach((index) => {
-          const item = store.state[entity].findIndex(({ id }) => id === index);
+          const item = store.state[entity].findIndex(({ id }) => isEqual(id, index));
           if (item !== -1) {
             store.commit('delete', { entity, item });
           }
         });
         updated[entity].forEach((item) => {
-          const updatedItem = store.state[entity].findIndex(({ id }) => id === item.id);
+          const updatedItem = store.state[entity].findIndex(({ id }) => isEqual(id, item.id));
           if (updatedItem !== -1) {
             store.commit('update', { entity, item, updatedItem });
           } else store.commit('create', { item, entity });
