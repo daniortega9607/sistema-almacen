@@ -39,10 +39,12 @@
         />
       </v-toolbar>
       <v-data-table
+        rows-per-page-text="Registros por página"
         :headers="getEntityHeaders(StockDetails)"
         :search="search"
         :items="item.details"
         no-results-text="No se encontraron registros"
+        :rows-per-page-items="rowsPerPage"
       >
         <template v-slot:items="props">
           <td
@@ -99,6 +101,7 @@ export default {
       stock: { quantity: null, buy_price: null, quantity_yd: null },
       details: [],
       StockDetails,
+      rowsPerPage: [5, 10, 25, { text: 'Todos', value: -1 }],
     };
   },
   watch: {

@@ -46,7 +46,7 @@ class StockMovementController extends Controller
         ]);
         $data['user_id'] = $request->user()->id;
         
-        $item = StockMovement::create();
+        $item = StockMovement::create($data);
 
         return response()->json([
             'status' => (bool) $item,

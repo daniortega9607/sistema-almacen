@@ -6,6 +6,9 @@
       <v-dialog
         v-model="dialog"
         max-width="690px"
+        :transition="isMobile ? 'dialog-bottom-transition' : 'dialog-transition'"
+        scrollable
+        :fullscreen="isMobile"
       >
         <template
           v-if="!entity.hideAddButton"
@@ -19,12 +22,33 @@
           </v-btn>
         </template>
         <v-card>
-          <v-card-title>
-            <span class="headline">{{ formTitle }}</span>
-            <v-subheader v-if="item.updated_at">
+          <v-toolbar
+            dark
+            color="primary"
+          >
+            <v-btn
+              v-if="isMobile"
+              icon
+              dark
+              @click="dialog = false"
+            >
+              <v-icon>close</v-icon>
+            </v-btn>
+            <v-toolbar-title>{{ formTitle }}</v-toolbar-title>
+            <v-spacer />
+            <v-subheader v-if="item.updated_at && !isMobile">
               Ultima modificacion: {{ moment(item.updated_at).fromNow() }}
             </v-subheader>
-          </v-card-title>
+            <v-toolbar-items v-if="isMobile">
+              <v-btn
+                dark
+                flat
+                @click="save"
+              >
+                Guardar
+              </v-btn>
+            </v-toolbar-items>
+          </v-toolbar>
           <v-card-text>
             <v-form
               ref="form"
@@ -43,7 +67,7 @@
               </template>
             </v-form>
           </v-card-text>
-          <v-card-actions>
+          <v-card-actions v-if="!isMobile">
             <v-spacer />
             <v-btn
               color="blue darken-1"
@@ -81,6 +105,8 @@
         :items="getItems({ entity:entity.apiUrl })"
         :custom-filter="customFilter"
         no-results-text="No se encontraron registros"
+        rows-per-page-text="Registros por página"
+        :rows-per-page-items="rowsPerPage"
         class="elevation-1"
       >
         <template v-slot:items="props">
@@ -159,6 +185,8 @@ export default {
     entity: null,
     editedIndex: -1,
     item: null,
+    rowsPerPage: [5, 10, 25, { text: 'Todos', value: -1 }],
+
   }),
 
   computed: {
@@ -166,6 +194,12 @@ export default {
       return this.editedIndex === -1
         ? `Crear ${this.entity.display_name}`
         : `Editar ${this.entity.display_name}`;
+    },
+    isMobile() {
+      return (
+        this.$vuetify.breakpoint.name === 'sm'
+        || this.$vuetify.breakpoint.name === 'xs'
+      );
     },
     ...mapGetters('entities', ['getItems']),
   },
@@ -203,7 +237,9 @@ export default {
     },
 
     async deleteItem(item) {
-      const index = this.$store.state.entities[this.entity.apiUrl].indexOf(item);
+      const index = this.$store.state.entities[this.entity.apiUrl].indexOf(
+        item,
+      );
       if (window.confirm('¿Esta seguro de eliminar este registro?')) {
         const [err, res] = await this.$store.dispatch('entities/delete', {
           deletedItem: index,
@@ -235,7 +271,11 @@ export default {
           if (!err) {
             this.$store.commit('app/showAlert', res);
             this.close();
-          } else if (err.response && err.response.data && err.response.data.error) {
+          } else if (
+            err.response
+            && err.response.data
+            && err.response.data.error
+          ) {
             const { data } = err.response;
             this.$store.commit('app/showAlert', {
               ...data,
@@ -250,7 +290,11 @@ export default {
           if (!err) {
             this.$store.commit('app/showAlert', res);
             this.close();
-          } else if (err.response && err.response.data && err.response.data.error) {
+          } else if (
+            err.response
+            && err.response.data
+            && err.response.data.error
+          ) {
             const { data } = err.response;
             this.$store.commit('app/showAlert', {
               ...data,
