@@ -9,6 +9,8 @@ const StockMovement = {
   url: 'envios-almacen',
   field_configs: {
     list: {
+      office_id: { align: 'left', formatter: Office.formatter, sortable: false },
+      to_office_id: { align: 'left', formatter: Office.formatter, sortable: false },
     },
     form: {
       office_id: {
@@ -25,8 +27,8 @@ const StockMovement = {
     },
   },
   fields: {
-    office_id: { display_name: 'Desde' },
-    to_office_id: { display_name: 'Hacia' },
+    office_id: { display_name: 'Desde Sucursal' },
+    to_office_id: { display_name: 'Hacia Sucursal' },
     balance: { display_name: 'Saldo' },
     total: { display_name: 'Total' },
     status: { display_name: 'Estado' },
