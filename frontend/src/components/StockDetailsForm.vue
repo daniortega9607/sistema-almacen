@@ -42,6 +42,7 @@
         :headers="getEntityHeaders(StockDetails)"
         :search="search"
         :items="item.details"
+        no-results-text="No se encontraron registros"
       >
         <template v-slot:items="props">
           <td
@@ -76,23 +77,6 @@
         </template>
       </v-data-table>
     </v-card-text>
-    <v-snackbar
-      v-for="(alert, index) in alerts"
-      :key="'alert-'+index"
-      v-model="alert.show"
-      :color="alert.status ? 'success':'error'"
-      :top="true"
-      absolute
-    >
-      {{ alert.message }}
-      <v-btn
-        flat
-        icon
-        @click="alert.show = false"
-      >
-        <v-icon>clear</v-icon>
-      </v-btn>
-    </v-snackbar>
   </v-card>
 </template>
 <script>
@@ -100,6 +84,7 @@ import { isEqual } from 'lodash';
 import FormGenerator from './form/FormGenerator.vue';
 import { getEntityHeaders } from '../utils';
 import StockDetails from '../utils/entities/stock_details';
+
 export default {
   components: { FormGenerator },
   props: {
@@ -111,9 +96,8 @@ export default {
   data() {
     return {
       search: '',
-      stock: { quantity: null, remaining_quantity: null, quantity_yd: null },
+      stock: { quantity: null, buy_price: null, quantity_yd: null },
       details: [],
-      alerts: [],
       StockDetails,
     };
   },
@@ -126,7 +110,6 @@ export default {
   methods: {
     convertYardsToMeters(value) {
       this.stock.quantity = parseFloat(value * 0.9144).toFixed(2);
-      this.stock.remaining_quantity = this.stock.quantity;
     },
     async save() {
       if (this.editedIndex === -1) {
@@ -134,7 +117,7 @@ export default {
         this.changeHandler(this.details);
         this.item.stock = 0;
         this.details.forEach(
-          (item) => { this.item.stock += parseFloat(item.remaining_quantity); },
+          (item) => { this.item.stock += parseFloat(item.quantity); },
         );
       } else {
         const [err, res] = await this.$store.dispatch('entities/create', {
@@ -151,20 +134,20 @@ export default {
           );
           this.item.stock = 0;
           this.details.forEach(
-            (item) => { this.item.stock += parseFloat(item.remaining_quantity); },
+            (item) => { this.item.stock += parseFloat(item.quantity); },
           );
           await this.$store.dispatch('entities/update', {
             entity: 'stocks',
             item: this.item,
             updatedItem,
           });
-          this.alerts.push({ ...res, show: true });
+          this.$store.commit('app/showAlert', res);
         }
       }
       Object.assign(this.stock, {
         quantity: null,
-        remaining_quantity: null,
         quantity_yd: null,
+        buy_price: null,
       });
     },
     async deleteItem(item) {
@@ -174,7 +157,7 @@ export default {
         if (this.editedIndex === -1) {
           this.item.stock = 0;
           this.item.details.forEach(
-            (detail) => { this.item.stock += detail.remaining_quantity; },
+            (detail) => { this.item.stock += detail.quantity; },
           );
         } else {
           const [err, res] = await this.$store.dispatch('entities/delete', {
@@ -191,20 +174,16 @@ export default {
             );
             this.item.stock = 0;
             this.details.forEach(
-              (detail) => { this.item.stock += parseFloat(detail.remaining_quantity); },
+              (detail) => { this.item.stock += parseFloat(detail.quantity); },
             );
             await this.$store.dispatch('entities/update', {
               entity: 'stocks',
               item: this.item,
               updatedItem,
             });
-            this.alerts.push({ ...res, show: true });
+            this.$store.commit('app/showAlert', res);
           }
         }
-        /*
-        if (!err) {
-          this.alerts.push({ ...res, show: true });
-        } */
       }
     },
 

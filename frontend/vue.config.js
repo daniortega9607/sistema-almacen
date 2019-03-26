@@ -17,5 +17,11 @@ module.exports = {
   pwa: {
     themeColor: '#BBDEFB',
     msTileColor: '#FFFFFF',
+    workboxPluginMode: 'InjectManifest',
+    workboxOptions: {
+      // swSrc is required in InjectManifest mode.
+      swSrc: 'src/service-worker.js',
+      // ...other Workbox options...
+    },
   },
 };

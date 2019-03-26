@@ -66,7 +66,6 @@ const actions = {
       if (store.state[entity].length) {
         deleted[entity] = [];
         updated[entity] = [];
-        console.log(entity)
         const [err, res] = await fetch({ url: `/api/${entity}/init`, data: store.state[entity].map(({ id }) => ({ id })), method: 'post' });
         if (!err) {
           res.forEach((item) => {

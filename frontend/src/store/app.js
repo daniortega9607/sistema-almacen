@@ -1,6 +1,7 @@
 const state = {
   drawer: null,
   selectedOffice: {},
+  alerts: [],
 };
 
 const getters = {};
@@ -13,6 +14,9 @@ const mutations = {
   },
   selectOffice(store, office) {
     store.selectedOffice = office;
+  },
+  showAlert(store, alert) {
+    store.alerts.push({ ...alert, show: true });
   },
 };
 

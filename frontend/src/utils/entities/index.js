@@ -21,7 +21,7 @@ export const Entities = {
   User,
   Setting,
   Stock,
-  StockMovement
+  StockMovement,
 };
 
 export const MappedEntities = {};

@@ -10,6 +10,6 @@ class StockDetail extends Model
     use SoftDeletes;
 
     protected $fillable = [
-        'stock_id', 'purchase_id','sale_id','quantity','remaining_quantity'
+        'stock_id', 'purchase_id','sale_id','quantity','buy_price'
     ];
 }

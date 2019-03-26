@@ -54,7 +54,7 @@ class StockController extends Controller
 
         if(count($details) > 0) {
             $item->details()->createMany($details);
-            $item->stock = $item->details()->sum('remaining_quantity');
+            $item->stock = $item->details()->sum('quantity');
             $item->save();
         }
 

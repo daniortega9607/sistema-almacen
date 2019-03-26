@@ -53,23 +53,6 @@
         Guardar
       </v-btn>
     </v-card-actions>
-    <v-snackbar
-      v-for="(alert, index) in alerts"
-      :key="'alert-'+index"
-      v-model="alert.show"
-      :color="alert.status ? 'success':'error'"
-      :right="true"
-      :top="true"
-    >
-      {{ alert.message }}
-      <v-btn
-        flat
-        icon
-        @click="alert.show = false"
-      >
-        <v-icon>clear</v-icon>
-      </v-btn>
-    </v-snackbar>
   </v-card>
 </template>
 
@@ -85,7 +68,6 @@ export default {
   data: () => ({
     entity: null,
     item: null,
-    alerts: [],
   }),
 
   created() {
@@ -109,13 +91,12 @@ export default {
           item: this.item,
         });
         if (!err) {
-          this.alerts.push({ ...res, show: true });
+          this.$store.commit('app/showAlert', res);
         } else if (err.response && err.response.data && err.response.data.error) {
           const { data } = err.response;
-          this.alerts.push({
+          this.$store.commit('app/showAlert', {
             ...data,
             message: data.error[Object.keys(data.error)[0]][0],
-            show: true,
           });
         }
       } else {

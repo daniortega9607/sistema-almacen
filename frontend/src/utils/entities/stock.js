@@ -6,6 +6,10 @@ import Fabric from './fabric';
 import Design from './design';
 import Color from './color';
 
+const StockQuantity = ({ props }) => (
+  <div><h3 class="pb-3">Cantidad en Almacen: {props.item[props.field] || 0}m</h3></div>
+);
+
 const Stock = {
   name: 'Stock',
   display_name: 'Almacen',
@@ -33,7 +37,7 @@ const Stock = {
         formatter: AutocompleteBox,
         formatter_options: { entity: Product, fromStore: true, concatedKeys: ['sku', 'fabric.name', 'design.name', 'color.name'] },
       },
-      stock: { type: 'number' },
+      stock: { type: 'number', formatter: StockQuantity },
       details: {
         formatter: StockDetailsForm,
         default: [],

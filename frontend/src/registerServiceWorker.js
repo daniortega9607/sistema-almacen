@@ -19,8 +19,13 @@ if (process.env.NODE_ENV === 'production') {
     updatefound() {
       console.log('New content is downloading.');
     },
-    updated() {
+    updated(registration) {
       console.log('New content is available; please refresh.');
+      const worker = registration.waiting;
+      if(window.confirm('Hay una actualización disponible, desea actualizar ahora?')) {
+        worker.postMessage({ action: 'skipWaiting' });
+        window.location.reload();
+      }
     },
     offline() {
       console.log(

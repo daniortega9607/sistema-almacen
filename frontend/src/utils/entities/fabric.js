@@ -23,8 +23,8 @@ const Fabric = {
   },
   fields: {
     name: { display_name: 'Nombre' },
-    buy_price: { display_name: 'Precio de Compra' },
-    sell_price: { display_name: 'Precio de Venta' },
+    buy_price: { display_name: 'Precio de Compra (USD)' },
+    sell_price: { display_name: 'Precio de Venta (MXN)' },
   },
   formatter: Formatter,
 };

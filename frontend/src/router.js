@@ -26,7 +26,7 @@ const routes = [
       { path: 'home', component: () => import('./views/Home.vue') },
       { path: 'ajustes', component: () => import('./views/Settings.vue') },
       { path: 'almacen', component: () => import('./views/Stock.vue') },
-      //{ path: 'movimientos-almacen', component: () => import('./views/StockMovement.vue') },
+      // { path: 'movimientos-almacen', component: () => import('./views/StockMovement.vue') },
       { path: ':entity', component: () => import('./components/Entity.vue') },
     ],
     meta: {

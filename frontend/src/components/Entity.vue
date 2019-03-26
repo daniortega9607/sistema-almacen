@@ -80,6 +80,7 @@
         :search="search"
         :items="getItems({ entity:entity.apiUrl })"
         :custom-filter="customFilter"
+        no-results-text="No se encontraron registros"
         class="elevation-1"
       >
         <template v-slot:items="props">
@@ -131,23 +132,6 @@
         </template>
       </v-data-table>
     </div>
-    <v-snackbar
-      v-for="(alert, index) in alerts"
-      :key="'alert-'+index"
-      v-model="alert.show"
-      :color="alert.status ? 'success':'error'"
-      :right="true"
-      :top="true"
-    >
-      {{ alert.message }}
-      <v-btn
-        flat
-        icon
-        @click="alert.show = false"
-      >
-        <v-icon>clear</v-icon>
-      </v-btn>
-    </v-snackbar>
   </v-card>
 </template>
 
@@ -175,7 +159,6 @@ export default {
     entity: null,
     editedIndex: -1,
     item: null,
-    alerts: [],
   }),
 
   computed: {
@@ -228,7 +211,7 @@ export default {
           item,
         });
         if (!err) {
-          this.alerts.push({ ...res, show: true });
+          this.$store.commit('app/showAlert', res);
         }
       }
     },
@@ -250,14 +233,13 @@ export default {
             item: this.item,
           });
           if (!err) {
-            this.alerts.push({ ...res, show: true });
+            this.$store.commit('app/showAlert', res);
             this.close();
           } else if (err.response && err.response.data && err.response.data.error) {
             const { data } = err.response;
-            this.alerts.push({
+            this.$store.commit('app/showAlert', {
               ...data,
               message: data.error[Object.keys(data.error)[0]][0],
-              show: true,
             });
           }
         } else {
@@ -266,14 +248,13 @@ export default {
             item: this.item,
           });
           if (!err) {
-            this.alerts.push({ ...res, show: true });
+            this.$store.commit('app/showAlert', res);
             this.close();
           } else if (err.response && err.response.data && err.response.data.error) {
             const { data } = err.response;
-            this.alerts.push({
+            this.$store.commit('app/showAlert', {
               ...data,
               message: data.error[Object.keys(data.error)[0]][0],
-              show: true,
             });
           }
         }

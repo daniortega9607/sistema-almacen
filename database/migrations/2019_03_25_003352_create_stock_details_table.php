@@ -19,7 +19,7 @@ class CreateStockDetailsTable extends Migration
             $table->integer('purchase_id')->nullable();
             $table->integer('sale_id')->nullable();
             $table->decimal('quantity',10,2);
-            $table->decimal('remaining_quantity',10,2);
+            $table->decimal('buy_price',10,2)->nullable();
             $table->timestamps();
             $table->softDeletes();
         });

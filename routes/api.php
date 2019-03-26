@@ -40,6 +40,8 @@ Route::group(['middleware' => ['auth:api']], function() {
     Route::post('/stocks/init', 'StockController@init');
     Route::resource('/stocks', 'StockController');
     Route::resource('/stock_details', 'StockDetailController');
+    Route::post('/stock_movements/init', 'StockMovementController@init');
+    Route::resource('/stock_movements', 'StockMovementController');
     Route::post('/users/init', 'UserController@init');
     Route::resource('/users', 'UserController');
 });

@@ -41,7 +41,7 @@
         </v-list-tile-content>
       </v-list-tile>
       <v-list-tile
-        v-if="$store.state.auth.user.details.user_type==1 &&false"
+        v-if="$store.state.auth.user.details.user_type==1"
         @click="$router.push('/envios-almacen')"
       >
         <v-list-tile-action>
