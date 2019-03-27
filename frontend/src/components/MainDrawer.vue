@@ -6,7 +6,7 @@
     clipped
   >
     <v-list dense>
-      <v-list-group
+      <!-- <v-list-group
         v-if="$store.state.auth.user.details.user_type==1"
         v-model="office"
         prepend-icon="store"
@@ -15,7 +15,7 @@
         <template v-slot:activator>
           <v-list-tile>
             <v-list-tile-content>
-              <v-list-tile-title>{{ $store.state.app.selectedOffice.name }}</v-list-tile-title>
+              <v-list-tile-title>Cambiar sucursal</v-list-tile-title>
             </v-list-tile-content>
           </v-list-tile>
         </template>
@@ -28,7 +28,17 @@
             <v-list-tile-title>{{ child.name }}</v-list-tile-title>
           </v-list-tile-content>
         </v-list-tile>
-      </v-list-group>
+      </v-list-group> -->
+      <v-list-tile
+        @click="$router.push('/')"
+      >
+        <v-list-tile-action>
+          <v-icon>home</v-icon>
+        </v-list-tile-action>
+        <v-list-tile-content>
+          <v-list-tile-title>Inicio</v-list-tile-title>
+        </v-list-tile-content>
+      </v-list-tile>
       <v-list-tile
         v-if="$store.state.auth.user.details.user_type==1"
         @click="$router.push('/almacen')"

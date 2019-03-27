@@ -3,6 +3,7 @@ import { fetch, getDataFromKey } from '../utils';
 import { getStoredEntities } from '../utils/entities';
 
 const state = {
+  isLoadingEntities: true,
   ...getStoredEntities(),
 };
 
@@ -60,41 +61,49 @@ const actions = {
     return [err, res];
   },
   async initialValues(store) {
+    store.commit('setInitialLoad', true);
+    const entities = Object.keys(store.state);
     const deleted = {};
     const updated = {};
-    Object.keys(store.state).forEach(async (entity) => {
-      if (store.state[entity].length) {
-        deleted[entity] = [];
-        updated[entity] = [];
-        const [err, res] = await fetch({ url: `/api/${entity}/init`, data: store.state[entity].map(({ id }) => ({ id })), method: 'post' });
-        if (!err) {
-          res.forEach((item) => {
-            if (item.deleted_at) deleted[entity].push(item.id);
-            else updated[entity].push(item);
-          });
-        }
-        deleted[entity].forEach((index) => {
-          const item = store.state[entity].findIndex(({ id }) => (
-            isEqual(id, index) || parseInt(id, 10) === parseInt(index, 10)));
-          if (item !== -1) {
-            store.commit('delete', { entity, item });
+    for await (const entity of entities) {
+      if (entity !== 'isLoadingEntities') {
+        if (store.state[entity].length) {
+          deleted[entity] = [];
+          updated[entity] = [];
+          const [err, res] = await fetch({ url: `/api/${entity}/init`, data: store.state[entity].map(({ id }) => ({ id })), method: 'post' });
+          if (!err) {
+            res.forEach((item) => {
+              if (item.deleted_at) deleted[entity].push(item.id);
+              else updated[entity].push(item);
+            });
           }
-        });
-        updated[entity].forEach((item) => {
-          const updatedItem = store.state[entity].findIndex(({ id }) => (
-            isEqual(id, item.id) || parseInt(id, 10) === parseInt(item.id, 10)));
-          if (updatedItem !== -1) {
-            store.commit('update', { entity, item, updatedItem });
-          } else store.commit('create', { item, entity });
-        });
-      } else {
-        store.dispatch('read', { entity });
+          deleted[entity].forEach((index) => {
+            const item = store.state[entity].findIndex(({ id }) => (
+              isEqual(id, index) || parseInt(id, 10) === parseInt(index, 10)));
+            if (item !== -1) {
+              store.commit('delete', { entity, item });
+            }
+          });
+          updated[entity].forEach((item) => {
+            const updatedItem = store.state[entity].findIndex(({ id }) => (
+              isEqual(id, item.id) || parseInt(id, 10) === parseInt(item.id, 10)));
+            if (updatedItem !== -1) {
+              store.commit('update', { entity, item, updatedItem });
+            } else store.commit('create', { item, entity });
+          });
+        } else {
+          await store.dispatch('read', { entity });
+        }
       }
-    });
+    }
+    store.commit('setInitialLoad', false);
   },
 };
 
 const mutations = {
+  setInitialLoad(store, value) {
+    store.isLoadingEntities = value;
+  },
   read(store, { items, entity }) {
     store[entity] = items;
   },

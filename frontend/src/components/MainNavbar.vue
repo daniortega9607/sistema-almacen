@@ -7,9 +7,41 @@
     clipped-left
   >
     <v-toolbar-side-icon @click.stop="drawer = !drawer" />
-    <v-toolbar-title @click="$router.push('/')">
+    <!-- <v-toolbar-title @click="$router.push('/')">
       {{ $store.state.auth.user.details.team.name }}
-    </v-toolbar-title>
+    </v-toolbar-title> -->
+    <v-menu :nudge-width="100">
+      <template v-slot:activator="{ on }">
+        <v-toolbar-title v-on="on">
+          <span>{{
+            $store.state.app.selectedOffice.name || $store.state.auth.user.details.team.name
+          }}</span>
+          <v-icon dark>
+            arrow_drop_down
+          </v-icon>
+        </v-toolbar-title>
+      </template>
+
+      <v-list>
+        <v-list-tile
+          v-for="item in $store.state.entities.offices"
+          :key="item.id"
+        >
+          <v-list-tile-content @click="$store.commit('app/selectOffice', item)">
+            <v-list-tile-title>{{ item.name }}</v-list-tile-title>
+            <v-list-tile-sub-title>{{ item.address }}</v-list-tile-sub-title>
+          </v-list-tile-content>
+          <v-list-tile-action v-if="item.id === $store.state.app.selectedOffice.id">
+            <v-btn
+              icon
+              @click="$store.commit('app/selectOffice', item)"
+            >
+              <v-icon>check</v-icon>
+            </v-btn>
+          </v-list-tile-action>
+        </v-list-tile>
+      </v-list>
+    </v-menu>
     <v-spacer />
     <!-- <v-menu
       v-model="showNotifications"
@@ -72,7 +104,7 @@
       </v-card>
     </v-menu> -->
 
-    <v-menu
+    <!-- <v-menu
       v-model="showOffices"
       :close-on-content-click="true"
       :nudge-width="200"
@@ -113,7 +145,7 @@
           </v-list-tile>
         </v-list>
       </v-card>
-    </v-menu>
+    </v-menu> -->
     <v-btn
       icon
       @click="logout"

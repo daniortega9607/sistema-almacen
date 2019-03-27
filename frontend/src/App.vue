@@ -1,29 +1,51 @@
 <template>
   <v-app v-if="$store.state.auth.authenticated">
-    <main-drawer />
-    <main-navbar />
-    <v-snackbar
-      v-for="(alert, index) in alerts"
-      :key="'alert-'+index"
-      v-model="alert.show"
-      :color="alert.status ? 'success':'error'"
-      :right="true"
-      :top="true"
-    >
-      {{ alert.message }}
-      <v-btn
-        flat
-        icon
-        @click="alert.show = false"
+    <template v-if="!isLoadingEntities">
+      <main-drawer />
+      <main-navbar />
+      <v-snackbar
+        v-for="(alert, index) in alerts"
+        :key="'alert-'+index"
+        v-model="alert.show"
+        :color="alert.status ? 'success':'error'"
+        :right="true"
+        :top="true"
       >
-        <v-icon>clear</v-icon>
-      </v-btn>
-    </v-snackbar>
-    <v-content>
-      <v-container fluid>
-        <router-view :key="$route.params.entity || ''" />
-      </v-container>
-    </v-content>
+        {{ alert.message }}
+        <v-btn
+          flat
+          icon
+          @click="alert.show = false"
+        >
+          <v-icon>clear</v-icon>
+        </v-btn>
+      </v-snackbar>
+      <v-content>
+        <v-container fluid>
+          <router-view :key="$route.params.entity || ''" />
+        </v-container>
+      </v-content>
+    </template>
+    <v-dialog
+      v-model="isLoadingEntities"
+      hide-overlay
+      persistent
+      width="300"
+    >
+      <v-card
+        color="primary"
+        dark
+      >
+        <v-card-text>
+          Obteniendo registros actualizados
+          <v-progress-linear
+            indeterminate
+            color="white"
+            class="mb-0"
+          />
+        </v-card-text>
+      </v-card>
+    </v-dialog>
   </v-app>
 </template>
 
@@ -39,7 +61,7 @@ export default {
     MainNavbar,
   },
   computed: {
-    ...mapState('entities', ['offices']),
+    ...mapState('entities', ['offices', 'isLoadingEntities']),
     ...mapState('app', ['alerts']),
   },
   watch: {
