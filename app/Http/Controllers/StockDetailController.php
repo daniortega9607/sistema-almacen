@@ -10,7 +10,7 @@ class StockDetailController extends Controller
     public function store(Request $request)
     {
         $item = StockDetail::create($request->only([
-            'stock_id', 'purchase_id','sale_id','quantity'
+            'stock_id', 'purchase_id','sale_id','quantity','buy_price'
         ]));
 
         return response()->json([
