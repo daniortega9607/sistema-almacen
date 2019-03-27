@@ -12,4 +12,10 @@ class StockDetail extends Model
     protected $fillable = [
         'stock_id', 'purchase_id','sale_id','quantity','buy_price'
     ];
+
+    protected $casts = [
+        'stock_id' => 'integer',
+        'purchase_id' => 'integer',
+        'sale_id' => 'integer',
+    ];
 }

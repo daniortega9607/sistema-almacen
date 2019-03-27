@@ -13,6 +13,12 @@ class Product extends Model
         'sku','image','fabric_id','design_id','color_id'
     ];
 
+    protected $casts = [
+        'fabric_id' => 'integer',
+        'design_id' => 'integer',
+        'color_id' => 'integer',
+    ];
+
     public function fabric()
     {
         return $this->belongsTo('App\Fabric')->withTrashed();

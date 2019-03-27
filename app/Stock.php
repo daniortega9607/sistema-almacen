@@ -13,6 +13,11 @@ class Stock extends Model
         'office_id','product_id','stock',
     ];
 
+    protected $casts = [
+        'office_id' => 'integer',
+        'product_id' => 'integer',
+    ];
+
     public function office()
     {
         return $this->belongsTo('App\Office')->withTrashed();

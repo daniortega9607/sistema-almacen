@@ -13,6 +13,12 @@ class StockMovement extends Model
         'office_id','to_office_id','balance','total','status','user_id',
     ];
 
+    protected $casts = [
+        'office_id' => 'integer',
+        'to_office_id' => 'integer',
+        'user_id' => 'integer',
+    ];
+
     public function office()
     {
         return $this->belongsTo('App\Office')->withTrashed();

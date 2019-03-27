@@ -12,6 +12,12 @@ class UserDetail extends Model
         'user_id', 'team_id','user_type','customer_id'
     ];
 
+    protected $casts = [
+        'user_id' => 'integer',
+        'team_id' => 'integer',
+        'customer_id' => 'integer',
+    ];
+
     public function user()
     {
         return $this->belongsTo('App\User')->withTrashed();
