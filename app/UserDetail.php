@@ -15,6 +15,7 @@ class UserDetail extends Model
     protected $casts = [
         'user_id' => 'integer',
         'team_id' => 'integer',
+        'user_type' => 'integer',
         'customer_id' => 'integer',
     ];
 
