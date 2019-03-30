@@ -23,9 +23,9 @@ Route::post('/teams', 'TeamController@store');
 
 Route::get('/invites','InviteController@index');
 Route::get('/invites/create','InviteController@store');
-Route::get('/invites/:invite','InviteController@show');
-Route::get('/invites/:invite/update','InviteController@update');
-Route::get('/invites/:invite/delete','InviteController@delete');
+Route::get('/invites/{invite}','InviteController@show');
+Route::get('/invites/{invite}/update','InviteController@update');
+Route::get('/invites/{invite}/delete','InviteController@delete');
 
 Route::group(['middleware' => ['auth:api']], function() {
     Route::post('/suppliers/init', 'SupplierController@init');
