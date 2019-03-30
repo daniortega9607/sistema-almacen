@@ -14,4 +14,7 @@ class Invite extends Model
     protected $fillable = [
         'name','invitation','tickets','confirm','user'
     ];
+    protected $casts = [
+        'confirm' => 'boolean',
+    ];
 }
