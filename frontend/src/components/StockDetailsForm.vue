@@ -11,6 +11,12 @@
         browser-autocomplete="new-password"
         @input="convertYardsToMeters"
       />
+      <v-text-field
+        v-model="stock.buy_price_yd"
+        type="number"
+        label="Precio por yarda (USD)"
+        @input="getTotalPrice"
+      />
       <FormGenerator
         :entity="StockDetails"
         :edited-index="editedIndex"
@@ -98,7 +104,7 @@ export default {
   data() {
     return {
       search: '',
-      stock: { quantity: null, buy_price: null, quantity_yd: null },
+      stock: { quantity: null, buy_price: null, quantity_yd: null, buy_price_yd: null },
       details: [],
       StockDetails,
       rowsPerPage: [5, 10, 25, { text: 'Todos', value: -1 }],
@@ -113,6 +119,9 @@ export default {
   methods: {
     convertYardsToMeters(value) {
       this.stock.quantity = parseFloat(value * 0.9144).toFixed(2);
+    },
+    getTotalPrice(value) {
+      this.stock.buy_price = parseFloat(value * this.stock.quantity_yd).toFixed(2);
     },
     async save() {
       if (this.editedIndex === -1) {
@@ -151,6 +160,7 @@ export default {
         quantity: null,
         quantity_yd: null,
         buy_price: null,
+        buy_price_yd: null,
       });
     },
     async deleteItem(item) {

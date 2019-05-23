@@ -1,5 +1,6 @@
 import AutocompleteBox from '../../components/form/AutocompleteBox.vue';
 import Office from './office';
+import StockMovementDetailsForm from '../../components/StockMovementDetailsForm.vue';
 
 const StockMovement = {
   name: 'StockMovement',
@@ -23,7 +24,9 @@ const StockMovement = {
         formatter: AutocompleteBox,
         formatter_options: { entity: Office, fromStore: true },
       },
-      details: { default: [] },
+      total: { type:'number', default: '0.00' },
+      balance: { type:'number', default: '0.00' },
+      details: { formatter: StockMovementDetailsForm, default: [] },
     },
   },
   fields: {

@@ -24,6 +24,28 @@ const getters = {
     });
     return { text, value: item.id };
   }),
+  getStockDetails: store => ({ office, product, quantity, selected }) => {
+    const stocks = [];
+    store.stocks.filter(item => item.office_id === office).forEach(item => {
+      if (product !== undefined && product !== null) {
+        if(item.product_id !== product) return;
+      }
+      item.details.forEach(detail => {
+        if (selected && selected.indexOf(detail.id) !== -1) return;
+        if (quantity) {
+          if (parseFloat(detail.quantity) < parseFloat(quantity)-5 || parseFloat(detail.quantity) > parseFloat(quantity)+5) return
+        }
+        stocks.push({
+          ...detail,
+          design: item.design.name,
+          color: item.color.name,
+          product: `${item.product.sku} ${item.fabric.name}${item.design.name ? ' '+item.design.name:''}${item.color.name ? ' '+item.color.name:''}`,
+          fabric: item.fabric.name,
+        })
+      })
+    })
+    return stocks;
+  }
 };
 
 const actions = {
